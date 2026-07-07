@@ -77,7 +77,24 @@ LJ_gas.py line 108 + 112, values in LJ_gas_run_MD.py ~line 70
 - for condensation we probably need a smaller box / higher density
 
 ## main loop summary (maggie)
-- (write yours here, 3-4 sentences, own words)
+- every step the code does one round of BAOAB (simulate_NVT_step):
 
+1. B: velocities get a half kick from the current forces. v += (F/m) * dt/2
+2. A: positions move half a step using those velocities. r += v * dt/2
+3. O: thermostat. velocities get shrunk by exp(-xi*dt) (friction) and
+   gaussian noise gets added, scaled so the system heads toward the
+   target temperature. this is the langevin part. only randomness in the loop.
+4. A: positions move the second half step
+5. forces recalculated from the new positions (calculate_force)
+6. B: second half kick with the new forces
+7. positions wrapped back into the box (periodic boundaries)
+
+then back in LJ_gas_run_MD.py the new positions go into position_trajectory
+and E_pot, E_kin, T, P get computed and stored in energy_trajectory.
+repeat n_steps times.
+
+short version: kick, move, thermostat shuffles velocities toward target T,
+move, new forces, kick, wrap. without step 3 it would just be velocity
+verlet (NVE) and energy would be conserved instead of T being controlled.
 ## main loop summary (soner)
 - (write yours here, 3-4 sentences, own words)
