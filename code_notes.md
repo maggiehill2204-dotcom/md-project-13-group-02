@@ -98,3 +98,40 @@ move, new forces, kick, wrap. without step 3 it would just be velocity
 verlet (NVE) and energy would be conserved instead of T being controlled.
 ## main loop summary (soner)
 - (write yours here, 3-4 sentences, own words)
+
+
+
+## tunable parameters (defaults from baseline run)
+all set in LJ_gas_run_MD.py, parameters section ~line 68-85
+
+- n_particles = 200
+- mass_argon = 39.95 u
+- sigma_argon = 0.34 nm         <- LJ zero crossing
+- epsilon_argon = 120*R*1e-3 ~ 0.998 kJ/mol   <- LJ well depth
+- dt = 0.1 ps                   <- timestep
+- n_steps = 1000                <- 100 ps total
+- temperature = 300 K           <- thermostat target
+- box_length = 100 nm           <- controls density. density = N and box together
+- tau_thermostat = 1 ps         <- coupling. small = faster relaxation to target T
+- rij_min = 0.01 nm             <- numerical safety cutoff, not physics
+- NVT = True                    <- True = langevin thermostat, False = NVE
+- file_name_base                <- output file names
+
+## baseline run stats
+- density 1.327e-05 g/cm^3. liquid argon is ~1.4 g/cm^3, so we are 100000x
+  too dilute. explains the boring E_pot
+- runtime 359 s for 1000 steps (0.36 s/step). bottleneck = python for loop
+  in calculate_force
+
+  ## reduced units
+- LJ papers use reduced units: energy in eps, length in sigma, T* = kB*T/eps
+- our eps corresponds to eps/kB = 120 K (thats where the 120 in the run script
+  comes from). so T* = T_kelvin / 120
+- baseline 300 K = T* 2.5 (hot gas)
+- hot run 600 K = T* 5.0
+- cold run 30 K = T* 0.25
+- useful reference points from the literature: LJ triple point T* ~ 0.69,
+  critical point T* ~ 1.3. so condensation experiments should target
+  T* below ~1, i.e. below ~120-160 K for our argon numbers
+- lengths: box = 100 nm = ~294 sigma. enormous. liquid-ish density would be
+  more like box ~ 6-7 sigma for 200 particles
