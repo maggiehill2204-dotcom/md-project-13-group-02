@@ -327,10 +327,15 @@ def calculate_force(ps: ParticleSystem, sim: SimulationParameters):
     # Initialize total force array
     force = np.zeros_like(ps.position)  # shape (N, 3)
 
-    # Distribute pairwise forces to particle i and j
-    for idx, (i, j) in enumerate(zip(i_upper[0], i_upper[1])):
-        force[i] -= f_ij[idx]
-        force[j] += f_ij[idx]
+
+# Distribute pairwise forces to particle i and j (vectorized, no python loop)
+    np.add.at(force, i_upper[0], -f_ij)
+    np.add.at(force, i_upper[1], f_ij)
+    
+    # # Distribute pairwise forces to particle i and j
+    # for idx, (i, j) in enumerate(zip(i_upper[0], i_upper[1])):
+    #     force[i] -= f_ij[idx]
+    #     force[j] += f_ij[idx]
 
     # update the force vector in the ParticleSystem class
     ps.force = force
