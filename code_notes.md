@@ -135,3 +135,32 @@ all set in LJ_gas_run_MD.py, parameters section ~line 68-85
   T* below ~1, i.e. below ~120-160 K for our argon numbers
 - lengths: box = 100 nm = ~294 sigma. enormous. liquid-ish density would be
   more like box ~ 6-7 sigma for 200 particles
+
+  ## phase 4a - cluster finder
+- cluster = connected group with pair distances < 1.5 sigma, minimum image applied
+- BFS flood fill over the neighbor matrix. tested: hot = ~all singles, cold = few big
+
+- 400 K: 127 clusters, max size 7 (gas). 40 K: 13 clusters, max 54 (droplets)
+- multiple droplets instead of one = fast quench signature. slower cooling
+  would merge them
+
+  ## phase 4b - E_pot evolution
+- transition onset ~220 K (T* 0.61), steepest 120->90 K. total E_pot: -180 (gas)
+  to -1936 kJ/mol (condensed)
+- E_pot doesnt plateau within stages during transition = not equilibrated =
+  fast quench, consistent with 4a
+
+
+  ## phase 4c - snapshot strip
+- 4 panels: 400 K gas, 220 K onset, 120 K droplets, 40 K condensed. colored by
+  cluster size, one shared color scale
+- gotcha: first version scaled colors per panel with one global colorbar, made
+  400 K look like it had size-50 clusters. it doesnt, max there is 7. always
+  pin vmin/vmax when panels share a colorbar
+- 2d projection of the 3d box, some apparent overlap is fake
+
+  ## phase 4d - largest cluster
+- onset 220->160 K (10->30), plateau ~30-38 through the big E_pot drop, jump to
+  54 at 40 K (probably a merge event)
+- lesson: largest-cluster tracks one droplet, E_pot tracks all of them. together
+  they show onset (~200 K) vs bulk condensation (120-90 K)
