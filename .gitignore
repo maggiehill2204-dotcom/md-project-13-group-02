@@ -1,0 +1,10 @@
+__pycache__/
+my_simulation*
+.vscode/
+
+*.npy
+*.dat
+*.xyz
+baseline_*
+hot_*
+cold_*
